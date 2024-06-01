@@ -10,11 +10,62 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+// model MyDate {
+//     id            String     @id @default(uuid())
+//     date          String
+//     timezone_type Int
+//     timezone      String
+//     ticket        Ticket[]
+//     start         Schedule[] @relation("start")
+//     end           Schedule[] @relation("end")
+// 	@@map("MyDate")
+// }
 
-    @@index([name])
+model Ticket {
+    id        String      @id @default(uuid())
+    expires   DateTime      
+    schedules Schedule[]
+    companies Company[]
+    routes    Route[]
+    routeData RouteData[]
+    createdAt DateTime    @default(now())
+}
+
+model Route {
+    id       String    @id @default(uuid())
+    distance String
+    from     RouteData @relation("from", fields: [fromId], references: [id], onDelete: Cascade)
+    to       RouteData @relation("to", fields: [toId], references: [id], onDelete: Cascade)
+    fromId   String
+    toId     String
+    ticket   Ticket?   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+    ticketId String?
+}
+
+model RouteData {
+    id       String  @id @default(uuid())
+    name     String
+    from     Route[] @relation("from")
+    to       Route[] @relation("to")
+    Ticket   Ticket? @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+    ticketId String?
+}
+
+model Schedule {
+    id        String  @id @default(uuid())
+    price     Float
+    start     DateTime 
+    end       DateTime 
+    company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+    companyId String
+    ticket    Ticket? @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+    ticketId  String?
+}
+
+model Company {
+    id        String     @id @default(uuid())
+    state     String
+    schedules Schedule[]
+    ticket    Ticket?    @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+    ticketId  String?
 }
