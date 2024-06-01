@@ -1,6 +1,5 @@
-import { RouteTicketRawData } from "~/lib/type"
+import type { RouteTicketRawData } from "~/lib/type"
 import { db } from "../db"
-import { unknown } from "zod"
 
 async function places(ticketId: string)
 {
@@ -44,7 +43,62 @@ async function findRoutes(
   }) as unknown as RouteTicketRawData[]
 }
 
+//#region DEEP SEARCH
+async function searchRoutes(
+  from: string,
+  to: string,
+  ticketId: string,
+)
+{
+  const validPaths: string[][] = [];
+  const routePath: string[] = [];
+
+  await search(from);
+
+  async function search(currentLocation: string)
+  {
+
+    routePath.push(currentLocation);
+
+    if (currentLocation === to)
+    {
+      validPaths.push([...routePath]);
+    }
+    else
+    {
+      const routes = await db.route.findMany({
+        select: {
+          to: {
+            select: {
+              name: true
+            }
+          }
+        },
+        where: {
+          ticketId: ticketId,
+          from: {
+            name: currentLocation
+          }
+        }
+      });
+
+      for (const route of routes)
+      {
+        if (routePath.filter(item => item === currentLocation).length < 2)
+        {
+          await search(route.to.name);
+        }
+      }
+    }
+    routePath.pop();
+  }
+
+  return validPaths;
+}
+//#endregion
+
 export const routeRepository = {
   places,
-  findRoutes
+  findRoutes,
+  searchRoutes
 }

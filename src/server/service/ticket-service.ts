@@ -32,7 +32,29 @@ async function getRoutes(
   const rawData = await routeRepository.findRoutes(from, to, ticketId);
 
   return extractedData(rawData);
+}
 
+async function getMultiRoutes(
+  from: string,
+  to: string,
+  ticketId: string,
+)
+{
+  const rawData = await routeRepository.searchRoutes(from, to, ticketId);
+
+  return rawData;
+}
+
+
+function extractedMultiData(data: RouteTicketRawData[][])
+{
+  return data.flatMap(item =>
+  {
+    const routes = extractedData(item);
+    return {
+      routes
+    }
+  })
 }
 
 function extractedData(data: RouteTicketRawData[])
@@ -60,4 +82,5 @@ export const ticketService =
   getValid,
   getPlaces,
   getRoutes,
+  getMultiRoutes,
 }
