@@ -103,10 +103,12 @@ function getSchedules(data: ApiTicket)
     {
       return {
         id: schedule.id,
+        travelTime: parseInt(date.getRawTimeBetween(schedule.start.date, schedule.end.date)),
         price: schedule.price,
         start: date.convertToDate(schedule.start.date),
         end: date.convertToDate(schedule.end.date),
         companyId: schedule.company.id,
+        routeId: item.id
       } as Schedule
     })
   })

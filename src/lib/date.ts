@@ -3,6 +3,11 @@ import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 dayjs.extend(utc);
 
+function getRawTimeBetween(start: string | Date, end: string | Date)
+{
+  return dayjs(end).diff(start, "minutes").toString();
+}
+
 function getTime(value: string | Date)
 {
   return dayjs(value).format("HH:mm");
@@ -28,4 +33,5 @@ export const date = {
   getDate,
   convertToDate,
   now,
+  getRawTimeBetween,
 }

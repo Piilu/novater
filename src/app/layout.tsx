@@ -12,11 +12,14 @@ export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
-}) {
+})
+{
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <main className="container w-full py-5 px-2 md:w-[70%] md:px-4">
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+        </main>
       </body>
     </html>
   );

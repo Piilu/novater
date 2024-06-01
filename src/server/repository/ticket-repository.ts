@@ -1,8 +1,6 @@
 import type { TicketData } from "~/lib/type";
 import { db } from "../db";
 
-
-
 async function create(data: TicketData)
 {
   return await db.ticket.create({
@@ -12,11 +10,6 @@ async function create(data: TicketData)
       companies: {
         createMany: {
           data: data.companies
-        },
-      },
-      schedules: {
-        createMany: {
-          data: data.schedules
         },
       },
       routeData: {
@@ -29,10 +22,14 @@ async function create(data: TicketData)
           data: data.routes
         },
       },
+      schedules: {
+        createMany: {
+          data: data.schedules
+        },
+      },
     }
   })
 }
-
 
 async function count()
 {

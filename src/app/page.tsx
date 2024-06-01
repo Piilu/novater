@@ -1,10 +1,10 @@
+import TicketList from "./_components/ticket/ticket-list";
 
-export default async function Home() {
+export default async function Home()
+{
 
   return (
-    <main>
-     
-    </main>
+      <TicketList />
   );
 }
 

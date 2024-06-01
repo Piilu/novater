@@ -32,14 +32,15 @@ model Ticket {
 }
 
 model Route {
-    id       String    @id @default(uuid())
+    id       String     @id @default(uuid())
     distance String
-    from     RouteData @relation("from", fields: [fromId], references: [id], onDelete: Cascade)
-    to       RouteData @relation("to", fields: [toId], references: [id], onDelete: Cascade)
+    from     RouteData  @relation("from", fields: [fromId], references: [id], onDelete: Cascade)
+    to       RouteData  @relation("to", fields: [toId], references: [id], onDelete: Cascade)
     fromId   String
     toId     String
-    ticket   Ticket    @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+    ticket   Ticket     @relation(fields: [ticketId], references: [id], onDelete: Cascade)
     ticketId String
+    schedule Schedule[]
 }
 
 model RouteData {
@@ -52,14 +53,17 @@ model RouteData {
 }
 
 model Schedule {
-    id        String   @id @default(uuid())
-    price     Float
-    start     DateTime
-    end       DateTime
-    company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-    companyId String
-    ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-    ticketId  String
+    id         String   @id @default(uuid())
+    travelTime Int // minutes
+    price      Float
+    start      DateTime
+    end        DateTime
+    route      Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+    company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+    companyId  String
+    ticket     Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+    ticketId   String
+    routeId    String
 }
 
 model Company {

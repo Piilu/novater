@@ -1,9 +1,10 @@
-import type 
+import type
 {
   Company,
   Route,
   RouteData,
-  Schedule
+  Schedule,
+  Ticket
 }
   from "@prisma/client"
 
@@ -65,4 +66,38 @@ export interface TicketData
   routes: Route[]
   routeData: RouteData[]
 }
+
+
+export interface RouteTicketRawData
+{
+  id: string,
+  distance: string,
+  schedule: Schedule & {
+    company: {
+      id: string;
+      state: string;
+      ticketId: string | null;
+    }
+  }[]
+  from: RouteData,
+  to: RouteData,
+  ticket: Ticket,
+}
+
+export interface TicketTravelData
+{
+  id: string,
+  distance: string,
+  schedule: Schedule & {
+    company: {
+      id: string;
+      state: string;
+      ticketId: string | null;
+    }
+  }
+  from: RouteData,
+  to: RouteData,
+  ticket: Ticket,
+}
+
 //#endregion
