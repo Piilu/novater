@@ -1,7 +1,8 @@
 import type { Company, Route, RouteData, Schedule } from "@prisma/client";
 import axios from "axios"
-import { TicketData, type ApiTicket } from "~/lib/type"
+import type { TicketData, ApiTicket } from "~/lib/type"
 import { ticketRepository } from "../repository/ticket-repository";
+import { date } from "~/lib/date";
 
 
 async function getApiTicketId()
@@ -44,7 +45,7 @@ async function getApiData()
 
   return {
     id: data.id,
-    expires: data.expires.date,
+    expires: date.convertToDate(data.expires.date),
     schedules,
     routes,
     routeData,
@@ -72,8 +73,6 @@ function getRoutes(data: ApiTicket)
       distance: item.distance.toString(),
       fromId: item.from.id,
       toId: item.to.id,
-      ticketId: data.id
-
     } as Route
   })
 }
@@ -85,13 +84,11 @@ function getRouteData(data: ApiTicket)
     const routeFrom = {
       id: item.from.id,
       name: item.from.name,
-      ticketId: data.id
     } as RouteData
 
     const routeTo = {
       id: item.to.id,
       name: item.to.name,
-      ticketId: data.id
     } as RouteData
 
     return [{ ...routeFrom }, { ...routeTo }]
@@ -107,10 +104,9 @@ function getSchedules(data: ApiTicket)
       return {
         id: schedule.id,
         price: schedule.price,
-        start: schedule.start.date,
-        end: schedule.end.date,
+        start: date.convertToDate(schedule.start.date),
+        end: date.convertToDate(schedule.end.date),
         companyId: schedule.company.id,
-        ticketId: data.id,
       } as Schedule
     })
   })
@@ -128,10 +124,11 @@ function getCompanies(data: ApiTicket)
       return {
         id: company.id,
         state: company.state,
-        ticketId: data.id,
       } as Company
     })
-  })
+  }).filter((value, index, self) => self
+    .map(item => item.id)
+    .indexOf(value.id) === index);
 }
 
 //#endregion

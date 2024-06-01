@@ -9,14 +9,19 @@ async function create(data: TicketData)
     data: {
       id: data.id,
       expires: data.expires,
+      companies: {
+        createMany: {
+          data: data.companies
+        },
+      },
       schedules: {
         createMany: {
           data: data.schedules
         },
       },
-      companies: {
+      routeData: {
         createMany: {
-          data: data.companies
+          data: data.routeData
         },
       },
       routes: {
@@ -24,11 +29,6 @@ async function create(data: TicketData)
           data: data.routes
         },
       },
-      routeData: {
-        createMany: {
-          data: data.routeData
-        },
-      }
     }
   })
 }

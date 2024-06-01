@@ -23,11 +23,11 @@ datasource db {
 
 model Ticket {
     id        String      @id @default(uuid())
-    expires   DateTime      
-    schedules Schedule[]
+    expires   DateTime
     companies Company[]
-    routes    Route[]
+    schedules Schedule[]
     routeData RouteData[]
+    routes    Route[]
     createdAt DateTime    @default(now())
 }
 
@@ -38,8 +38,8 @@ model Route {
     to       RouteData @relation("to", fields: [toId], references: [id], onDelete: Cascade)
     fromId   String
     toId     String
-    ticket   Ticket?   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-    ticketId String?
+    ticket   Ticket    @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+    ticketId String
 }
 
 model RouteData {
@@ -47,25 +47,25 @@ model RouteData {
     name     String
     from     Route[] @relation("from")
     to       Route[] @relation("to")
-    Ticket   Ticket? @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-    ticketId String?
+    ticket   Ticket  @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+    ticketId String
 }
 
 model Schedule {
-    id        String  @id @default(uuid())
+    id        String   @id @default(uuid())
     price     Float
-    start     DateTime 
-    end       DateTime 
-    company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+    start     DateTime
+    end       DateTime
+    company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
     companyId String
-    ticket    Ticket? @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-    ticketId  String?
+    ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+    ticketId  String
 }
 
 model Company {
     id        String     @id @default(uuid())
     state     String
     schedules Schedule[]
-    ticket    Ticket?    @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-    ticketId  String?
+    ticket    Ticket     @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+    ticketId  String
 }
