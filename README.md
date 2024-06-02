@@ -10,3 +10,6 @@
 - Võimaluse osta ümberistumisega piletit
 - Lazy loading
 - Parema filtreerimise
+
+<a href="./time_report.pdf">Kulutatud aeg</a>
+
