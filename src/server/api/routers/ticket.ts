@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { sortType, sortValue } from "~/lib/type";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { getError } from "~/server/errorUtils";
 import { comapnyRepository } from "~/server/repository/company-repository";
@@ -56,6 +57,8 @@ export const ticketRouter = createTRPCRouter({
       to: z.string(),
       filters: z.array(z.string()),
       id: z.string().optional(),
+      sortType: sortType,
+      sortValue: sortValue,
     }))
     .query(async ({ input }) =>
     {
@@ -63,7 +66,7 @@ export const ticketRouter = createTRPCRouter({
       {
         const ticketId = !input.id ? (await ticketService.getValid()).id : input.id;
         const filters = input.filters;
-        return await ticketService.getRoutes(input.form, input.to, filters, ticketId);
+        return await ticketService.getRoutes(input.form, input.to, filters, ticketId, input.sortType, input.sortValue);
       }
       catch (error: unknown)
       {

@@ -13,7 +13,7 @@ import { Button } from '../ui/button'
 import { cn } from '~/lib/utils'
 import { Separator } from '../ui/separator';
 import { useForm } from 'react-hook-form';
-import { type ReservationSchema, reservationSchema, type TicketData, type TicketTravelData } from '~/lib/type';
+import { type ReservationSchema, reservationSchema, type TicketTravelData } from '~/lib/type';
 import { Form, FormField } from '../ui/form';
 import { Input } from '../ui/input';
 import SimpleFormItem from '../ui/simple-form-input';
@@ -47,7 +47,6 @@ export default function Reservation(props: ReservationProps)
     }
   })
 
-
   const onSubmit = () =>
   {
     reservation.mutate(form.getValues(), {
@@ -64,7 +63,7 @@ export default function Reservation(props: ReservationProps)
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={(value)=>setIsOpen(value)}>
+    <Dialog open={isOpen} onOpenChange={(value) => setIsOpen(value)}>
       <DialogTrigger asChild>
         <Button className={cn(className)}>{label}</Button>
       </DialogTrigger>
@@ -72,8 +71,12 @@ export default function Reservation(props: ReservationProps)
         <DialogHeader>
           <DialogTitle>Reservation</DialogTitle>
         </DialogHeader>
-        <TicketItem item={selectedTicket} />
+        <TicketItem compact item={selectedTicket} />
         <Separator />
+        <div className='flex justify-between'>
+            <p className='text-xl font-semibold'>Price:</p>
+            <p className='text-xl font-semibold'>50,00 €</p>
+        </div>
         <Form {...form}>
           <form className='flex flex-col gap-3'>
             <FormField
@@ -97,11 +100,7 @@ export default function Reservation(props: ReservationProps)
             <Button isLoading={reservation.isPending} onClick={form.handleSubmit(onSubmit)}>Book</Button>
           </form>
         </Form>
-
-
       </DialogContent>
     </Dialog>
   )
 }
-
-

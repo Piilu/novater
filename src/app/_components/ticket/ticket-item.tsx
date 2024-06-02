@@ -3,16 +3,16 @@ import SimpleCard from '../ui/simple-card'
 import type { TicketTravelData } from '~/lib/type'
 import DirectionItem from './direction-item'
 import { format } from '~/lib/format'
-import { Button } from '../ui/button'
 import Reservation from '../reservation/reservation'
 
 type TicketItemProps = {
-  item: TicketTravelData
+  item: TicketTravelData,
+  compact?: boolean,
 }
 
 export default function TicketItem(props: TicketItemProps)
 {
-  const { item } = props;
+  const { item, compact } = props;
 
   const details = {
     company: item.schedule.company.state,
@@ -24,6 +24,12 @@ export default function TicketItem(props: TicketItemProps)
     travelTime: item.schedule.travelTime,
   }
 
+  if (compact)
+  {
+    return (
+      <DirectionItem details={details} />
+    )
+  }
   return (
     <SimpleCard footer={footer()} className='p-3'>
       <DirectionItem details={details} />

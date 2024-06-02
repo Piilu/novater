@@ -8,6 +8,8 @@ import { type TicketModelData } from '~/lib/type';
 import SimpleSelect from '../ui/simple-select';
 import { date } from '~/lib/date';
 import { useDebounce } from 'use-debounce';
+import ReservationItem from './reservation-item';
+import { Search } from "lucide-react"
 
 
 type ReservationListProps = {
@@ -49,6 +51,21 @@ export default function ReservationList(props: ReservationListProps)
             value={selectedId} />
 
           <small className='right-0 text-xs -bottom-4'>Found <b>{reservations.data?.length ?? 0}</b> reservation(s)</small>
+        </div>
+
+        <div className='flex flex-col gap-3'>
+          {reservations.data?.map(item =>
+          {
+            return (
+              <ReservationItem reservation={item} key={"reservation-" + item.id} />
+            )
+          })}
+          {reservations.data?.length === 0 &&
+            <div className='flex flex-col items-center'>
+              <Search className="w-16 h-16" />
+              <p className='text-center text-xl font-semibold'>Nothing to show </p>
+            </div>
+          }
         </div>
       </div>
     </div>

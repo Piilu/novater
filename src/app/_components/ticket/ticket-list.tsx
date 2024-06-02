@@ -6,13 +6,20 @@ import { api } from '~/trpc/react';
 import SimpleSelect from '../ui/simple-select';
 import DirectionArrow from '../ui/direction-arrow';
 import SelectSearch from '../ui/select-search';
-import { FilterIcon } from 'lucide-react';
+import { FilterIcon, Search, SortAsc, SortDesc } from 'lucide-react';
 import type { Ticket } from '@prisma/client';
-import type { TicketModelData } from '~/lib/type';
+import type { SortType, SortValue, TicketModelData } from '~/lib/type';
 import { date } from '~/lib/date';
 import useQuery, { QueryNames } from '~/hooks/use-query';
 import { useDebounce } from 'use-debounce';
+import { Button } from '../ui/button';
 
+const sortValues =
+  [
+    { name: "Price", value: "price" },
+    { name: "Distance", value: "distance" },
+    { name: "Travel time", value: "travel_time" }
+  ]
 
 type TicketListProps = {
   currentTicket: Ticket,
@@ -22,16 +29,22 @@ type TicketListProps = {
 export default function TicketList(props: TicketListProps)
 {
   const { currentTicket, storedTickets } = props;
-  const { updateValue, from, to } = useQuery();
   const [filters, setFilters] = useState<string[]>([]);
+  const [sortValue, setSortValue] = useState<SortValue>("price");
+  const [sortType, setSortType] = useState<SortType>("asc");
+
+  const { updateValue, from, to } = useQuery();
   const [selectedId, setSelectedId] = useState<string>(currentTicket.id);
   const [debounceFilters] = useDebounce(filters, 500);
+  const [debounceSortType] = useDebounce(sortType, 500);
 
   const tickets = api.ticket.routes.useQuery({
     to: to ?? "",
     form: from ?? "",
     id: selectedId,
-    filters:debounceFilters,
+    filters: debounceFilters,
+    sortType: debounceSortType,
+    sortValue,
   }, { refetchOnWindowFocus: false, enabled: to !== "" && from !== "" })
 
   const places = api.ticket.places.useQuery(selectedId, { refetchOnWindowFocus: false, });
@@ -60,8 +73,23 @@ export default function TicketList(props: TicketListProps)
           icon={<FilterIcon className="h-4 w-4" />}
           onValueChange={(filters) => setFilters(filters)}
           selected={filters} options={companyNames.data ?? []} />
-
-        <span className='ml-auto flex items-center gap-2 relative'>
+        <div className="flex items-center h-[2.26em]">
+          <SimpleSelect
+            onValueChange={(value) => setSortValue(value as SortValue)}
+            value={sortValue}
+            data={sortValues}
+            triggerClassName='w-[200px]' placeholder='Sort' />
+          <Button
+            onClick={() => sortType === "asc" ? setSortType("desc") : setSortType("asc")}
+            className="transition"
+            variant="ghost"
+            size="icon" >
+            {sortType === "asc" ?
+              <SortAsc className="h-5 w-5" />
+              : <SortDesc className="h-5 w-5" />}
+          </Button>
+        </div>
+        <span className='ml-auto flex items-center gap-3 relative'>
           <SimpleSelect
             id="ticket"
             data={storedTickets.map(item => { return { value: item.id, name: `Valid until ${date.getDate(item.expires)}`, isValid: item.isValid } })}
@@ -73,14 +101,20 @@ export default function TicketList(props: TicketListProps)
           }
         </span>
       </div>
-      <div className='flex flex-col gap-3'>
+      <div className='flex flex-col gap-3 mt-3'>
         {tickets.data?.map((item, index) =>
         {
           return (
             <TicketItem item={item} key={index + "test"} />
           )
         })}
-        {tickets.isLoading && <p>Loading ...</p>}
+        {tickets.isLoading && <p className='text-center'>Loading ...</p>}
+        {tickets.data?.length === 0 &&
+          <div className='flex flex-col items-center'>
+            <Search className="w-16 h-16"/>
+            <p className='text-center text-xl font-semibold'>Nothing to show </p>
+          </div>
+          }
       </div>
     </div>
   )

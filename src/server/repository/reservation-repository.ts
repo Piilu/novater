@@ -16,7 +16,8 @@ async function findAll(
             include: {
               company: true,
               route: {
-                include: {
+                select: {
+                  distance: true,
                   from: true,
                   to: true,
                 }

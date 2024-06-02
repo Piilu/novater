@@ -1,4 +1,4 @@
-import type { FromTo, RouteTicketRawData } from "~/lib/type"
+import type { FromTo, RouteTicketRawData, SortType, SortValue } from "~/lib/type"
 import { db } from "../db"
 
 async function places(ticketId: string)
@@ -19,6 +19,8 @@ async function findRoutes(
   to: string,
   filters: string[],
   ticketId: string,
+  sortType?: SortType,
+  sortValue?: SortValue,
 )
 {
   return await db.route.findMany({
@@ -27,6 +29,10 @@ async function findRoutes(
       to: true,
       ticket: true,
       schedule: {
+        orderBy: {
+          price: sortValue === "price" ? sortType : undefined,
+          travelTime: sortValue === "travel_time" ? sortType : undefined,
+        },
         where: {
           company: {
             state: {
@@ -38,6 +44,9 @@ async function findRoutes(
           company: true,
         }
       }
+    },
+    orderBy: {
+      distance: sortValue === "distance" ? sortType : undefined,
     },
     where: {
       ticketId: ticketId,

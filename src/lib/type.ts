@@ -140,19 +140,29 @@ export interface ReservationModel
   totalPrice: string,
   totalTravelTime: string,
   createdAt: Date,
-  tickets: {
-    id: number,
-    amount: number,
-    createdAt: Date,
-    schedule: Schedule & {
-      company: Company,
-      route: Route & {
-        from: RouteData,
-        to: RouteData,
-      },
-    }
-  }[]
+  tickets: ReservationTicketData[],
   ticket: Ticket,
   ticketId: string,
 }
+
+export interface ReservationTicketData
+{
+  id: number,
+  createdAt: Date,
+  schedule: Schedule & {
+    company: Company,
+    route: Route & {
+      from: RouteData,
+      to: RouteData,
+    },
+  }
+}
+//#endregion
+
+//#region  SORT
+export const sortType = z.enum(["asc", "desc"]).optional();
+export type SortType = z.infer<typeof sortType>;
+
+export const sortValue = z.enum(["price", "distance", "travel_time"]).optional();
+export type SortValue = z.infer<typeof sortValue>;
 //#endregion

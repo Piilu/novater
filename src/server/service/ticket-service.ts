@@ -1,4 +1,4 @@
-import type { RouteTicketRawData, TicketModelData, TicketTravelData } from "~/lib/type";
+import type { RouteTicketRawData, SortType, SortValue, TicketModelData, TicketTravelData } from "~/lib/type";
 import { routeRepository } from "../repository/route-repository";
 import { ticketRepository } from "../repository/ticket-repository";
 import { importService } from "./import-service";
@@ -29,10 +29,11 @@ async function getRoutes(
   to: string,
   filters: string[],
   ticketId: string,
+  sortType?: SortType,
+  sortValue?: SortValue,
 )
 {
-  const rawData = await routeRepository.findRoutes(from, to, filters, ticketId);
-
+  const rawData = await routeRepository.findRoutes(from, to, filters, ticketId, sortType, sortValue);
   return extractedData(rawData);
 }
 
