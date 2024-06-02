@@ -1,4 +1,4 @@
-## Kuidas tööle panna
+## Kuidas proovida
 
 1. Jooksuta `npm i`
 2. Loo `.env` fail `.env.example` põhjal
