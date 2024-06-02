@@ -1,4 +1,4 @@
-import type { RouteTicketRawData } from "~/lib/type"
+import type { FromTo, RouteTicketRawData } from "~/lib/type"
 import { db } from "../db"
 
 async function places(ticketId: string)
@@ -17,6 +17,7 @@ async function places(ticketId: string)
 async function findRoutes(
   from: string,
   to: string,
+  filters: string[],
   ticketId: string,
 )
 {
@@ -26,6 +27,13 @@ async function findRoutes(
       to: true,
       ticket: true,
       schedule: {
+        where: {
+          company: {
+            state: {
+              in: filters.length === 0 ? undefined : filters
+            }
+          }
+        },
         include: {
           company: true,
         }
@@ -50,15 +58,21 @@ async function searchRoutes(
   ticketId: string,
 )
 {
-  const validPaths: string[][] = [];
-  const routePath: string[] = [];
+  const validPaths: FromTo[][] = [];
+  const routePath: FromTo[] = [];
+  const routeNamePath: string[] = [];
 
   await search(from);
 
-  async function search(currentLocation: string)
+  async function search(currentLocation: string, fromTo?: FromTo)
   {
 
-    routePath.push(currentLocation);
+    if (fromTo)
+    {
+      routePath.push(fromTo)
+    }
+
+    routeNamePath.push(currentLocation);
 
     if (currentLocation === to)
     {
@@ -68,11 +82,8 @@ async function searchRoutes(
     {
       const routes = await db.route.findMany({
         select: {
-          to: {
-            select: {
-              name: true
-            }
-          }
+          to: true,
+          from: true,
         },
         where: {
           ticketId: ticketId,
@@ -84,9 +95,9 @@ async function searchRoutes(
 
       for (const route of routes)
       {
-        if (routePath.filter(item => item === currentLocation).length < 2)
+        if (routeNamePath.filter(item => item === currentLocation).length < 2)
         {
-          await search(route.to.name);
+          await search(route.to.name, { from: route.from.name, to: route.to.name });
         }
       }
     }

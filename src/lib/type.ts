@@ -7,6 +7,7 @@ import type
   Ticket
 }
   from "@prisma/client"
+import { z } from "zod"
 
 export interface CustomDate
 {
@@ -100,4 +101,25 @@ export interface TicketTravelData
   ticket: Ticket,
 }
 
+//#endregion
+
+
+export interface FromTo
+{
+  from: string,
+  to: string,
+}
+
+
+
+//#region RESERVATION
+export const reservationSchema = z.object({
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+  totalPrice: z.string(),
+  schedules: z.array(z.string()),
+  tickets: z.array(z.string()),
+})
+
+export type ReservationSchema = z.infer<typeof reservationSchema>
 //#endregion

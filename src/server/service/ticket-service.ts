@@ -26,10 +26,11 @@ async function getPlaces(id: string)
 async function getRoutes(
   from: string,
   to: string,
+  filters: string[],
   ticketId: string,
 )
 {
-  const rawData = await routeRepository.findRoutes(from, to, ticketId);
+  const rawData = await routeRepository.findRoutes(from, to, filters, ticketId);
 
   return extractedData(rawData);
 }
@@ -37,24 +38,28 @@ async function getRoutes(
 async function getMultiRoutes(
   from: string,
   to: string,
+  filters: string[],
   ticketId: string,
 )
 {
   const rawData = await routeRepository.searchRoutes(from, to, ticketId);
 
-  return rawData;
-}
-
-
-function extractedMultiData(data: RouteTicketRawData[][])
-{
-  return data.flatMap(item =>
+  const data: RouteTicketRawData[][][] = [];
+  for (const trips of rawData)
   {
-    const routes = extractedData(item);
-    return {
-      routes
+    const tripRoutes: RouteTicketRawData[][] = [];
+
+    for (const trip of trips)
+    {
+      const tripRoute = await routeRepository.findRoutes(trip.from, trip.to, filters, ticketId);
+      tripRoutes.push(tripRoute);
     }
-  })
+    data.push(tripRoutes)
+  }
+  return data;
+
+
+  return rawData;
 }
 
 function extractedData(data: RouteTicketRawData[])
