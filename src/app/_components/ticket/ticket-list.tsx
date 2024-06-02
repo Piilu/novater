@@ -13,6 +13,9 @@ import { date } from '~/lib/date';
 import useQuery, { QueryNames } from '~/hooks/use-query';
 import { useDebounce } from 'use-debounce';
 import { Button } from '../ui/button';
+import RecommendedRoutes from './recommended-routes';
+import Checkout from '../reservation/checkout';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 
 const sortValues =
   [
@@ -32,6 +35,7 @@ export default function TicketList(props: TicketListProps)
   const [filters, setFilters] = useState<string[]>([]);
   const [sortValue, setSortValue] = useState<SortValue>("price");
   const [sortType, setSortType] = useState<SortType>("asc");
+  const [list] = useAutoAnimate();
 
   const { updateValue, from, to } = useQuery();
   const [selectedId, setSelectedId] = useState<string>(currentTicket.id);
@@ -101,7 +105,7 @@ export default function TicketList(props: TicketListProps)
           }
         </span>
       </div>
-      <div className='flex flex-col gap-3 mt-3'>
+      <div ref={list} className='flex flex-col gap-3 mt-3'>
         {tickets.data?.map((item, index) =>
         {
           return (
@@ -111,11 +115,21 @@ export default function TicketList(props: TicketListProps)
         {tickets.isLoading && <p className='text-center'>Loading ...</p>}
         {tickets.data?.length === 0 &&
           <div className='flex flex-col items-center'>
-            <Search className="w-16 h-16"/>
+            <Search className="w-16 h-16" />
             <p className='text-center text-xl font-semibold'>Nothing to show </p>
           </div>
-          }
+        }
+
+        {from && to ?
+          <RecommendedRoutes
+            from={from}
+            to={to}
+            ticketId={selectedId}
+            enabled={tickets.data?.length == 0 && filters.length == 0} />
+
+          : null}
       </div>
+      <Checkout ticket={currentTicket} className="fixed bottom-4 w-full inset-x-0 mx-auto" />
     </div>
   )
 }

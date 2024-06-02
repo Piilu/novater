@@ -1,9 +1,9 @@
 import React from 'react'
 import SimpleCard from '../ui/simple-card'
-import TicketItem from '../ticket/ticket-item';
-import type { ReservationModel, ReservationTicketData } from '~/lib/type';
+import type { ReservationModel } from '~/lib/type';
 import DirectionItem from '../ticket/direction-item';
-import { Separator } from '../ui/separator';
+import { format } from '~/lib/format';
+import { date } from '~/lib/date';
 
 type ReservationItemProps =
   {
@@ -17,11 +17,11 @@ export default function ReservationItem(props: ReservationItemProps)
       <div className='flex flex-col w-full gap-3  '>
         <div className='flex justify-between'>
           <p className="text-xl font-semibold">Total price:</p>
-          <p className="text-xl font-semibold">50</p>
+          <p className="text-xl font-semibold">{format.price(reservation.totalPrice)}</p>
         </div>
         <div className='flex justify-between'>
           <p className="text-xl font-semibold">Total travel time:</p>
-          <p className="text-xl font-semibold">50</p>
+          <p className="text-xl font-semibold">{date.formatTime(parseInt(reservation.totalTravelTime))}</p>
         </div>
       </div>
     } title={`${reservation.firstName} ${reservation.lastName}`} className='p-3'>
@@ -35,6 +35,7 @@ export default function ReservationItem(props: ReservationItemProps)
           endDate: item.schedule.end,
           distance: item.schedule.route.distance,
           travelTime: item.schedule.travelTime,
+          amount: item.amount,
         }
 
         return (

@@ -44,10 +44,10 @@ async function create(data: ReservationSchema)
       firstName: data.firstName,
       lastName: data.lastName,
       totalPrice: data.totalPrice,
-      totalTravelTime: "21",
+      totalTravelTime: data.totalTravelTime,
       tickets: {
         createMany: {
-          data: data.schedules.map(id => { return { scheduleId: id } })
+          data: data.schedules.map(item => { return { scheduleId: item.id, amount: item.amount } })
         }
       }
     }

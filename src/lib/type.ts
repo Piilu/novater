@@ -58,6 +58,12 @@ export interface ApiCompany
 
 
 //#region TICKET DATA
+export interface LocalTicket
+{
+  amount: number,
+  ticket: TicketTravelData,
+}
+
 export interface TicketModelData
 {
   isValid: boolean;
@@ -111,21 +117,16 @@ export interface TicketTravelData
 
 //#endregion
 
-
-export interface FromTo
-{
-  from: string,
-  to: string,
-}
-
-
-
 //#region RESERVATION
 export const reservationSchema = z.object({
   firstName: z.string().min(1),
   lastName: z.string().min(1),
   totalPrice: z.string(),
-  schedules: z.array(z.string()),
+  totalTravelTime: z.number(),
+  schedules: z.array(z.object({
+    id: z.string(),
+    amount: z.number()
+  })),
   tickets: z.array(z.string()),
 })
 
@@ -148,6 +149,7 @@ export interface ReservationModel
 export interface ReservationTicketData
 {
   id: number,
+  amount:number,
   createdAt: Date,
   schedule: Schedule & {
     company: Company,

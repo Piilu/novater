@@ -1,4 +1,4 @@
-import type { FromTo, RouteTicketRawData, SortType, SortValue } from "~/lib/type"
+import type { RouteTicketRawData, SortType, SortValue } from "~/lib/type"
 import { db } from "../db"
 
 async function places(ticketId: string)
@@ -67,22 +67,15 @@ async function searchRoutes(
   ticketId: string,
 )
 {
-  const validPaths: FromTo[][] = [];
-  const routePath: FromTo[] = [];
-  const routeNamePath: string[] = [];
+  const validPaths: string[][] = [];
+  const routePath: string[] = [];
 
   await search(from);
 
-  async function search(currentLocation: string, fromTo?: FromTo)
+  async function search(currentLocation: string)
   {
 
-    if (fromTo)
-    {
-      routePath.push(fromTo)
-    }
-
-    routeNamePath.push(currentLocation);
-
+    routePath.push(currentLocation);
     if (currentLocation === to)
     {
       validPaths.push([...routePath]);
@@ -91,22 +84,22 @@ async function searchRoutes(
     {
       const routes = await db.route.findMany({
         select: {
-          to: true,
           from: true,
+          to: true,
         },
         where: {
-          ticketId: ticketId,
+          ticketId:ticketId,
           from: {
-            name: currentLocation
+            name: currentLocation,
           }
         }
-      });
+      })
 
       for (const route of routes)
       {
-        if (routeNamePath.filter(item => item === currentLocation).length < 2)
+        if (!routePath.includes(route.to.name))
         {
-          await search(route.to.name, { from: route.from.name, to: route.to.name });
+          await search(route.to.name)
         }
       }
     }

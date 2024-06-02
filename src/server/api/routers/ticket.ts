@@ -3,6 +3,7 @@ import { sortType, sortValue } from "~/lib/type";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { getError } from "~/server/errorUtils";
 import { comapnyRepository } from "~/server/repository/company-repository";
+import { routeRepository } from "~/server/repository/route-repository";
 import { ticketRepository } from "~/server/repository/ticket-repository";
 import { ticketService } from "~/server/service/ticket-service";
 
@@ -86,4 +87,25 @@ export const ticketRouter = createTRPCRouter({
         throw new Error(getError(error))
       }
     }),
+
+    recommended: publicProcedure
+    .input(z.object({
+      to: z.string(),
+      from: z.string(),
+      ticketId: z.string(),
+    }))
+    .query(async ({ input }) =>
+    {
+      try
+      {
+        const ticketId = input.ticketId;
+        const from = input.from;
+        const to = input.to;
+        return await routeRepository.searchRoutes(from, to, ticketId);
+      }
+      catch (error: unknown)
+      {
+        throw new Error(getError(error))
+      }
+    })
 });

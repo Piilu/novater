@@ -10,7 +10,7 @@ import { date } from '~/lib/date';
 import { useDebounce } from 'use-debounce';
 import ReservationItem from './reservation-item';
 import { Search } from "lucide-react"
-
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 
 type ReservationListProps = {
   ticket: Ticket,
@@ -24,6 +24,7 @@ export default function ReservationList(props: ReservationListProps)
   const [lastName, setLastName] = useState<string>("");
   const [debaunceFirstName] = useDebounce(firstName, 500);
   const [debaunceLastName] = useDebounce(lastName, 500);
+  const [list] = useAutoAnimate();
   const reservations = api.reservation.getAll.useQuery({
     firstName: debaunceFirstName,
     lastName: debaunceLastName,
@@ -53,7 +54,7 @@ export default function ReservationList(props: ReservationListProps)
           <small className='right-0 text-xs -bottom-4'>Found <b>{reservations.data?.length ?? 0}</b> reservation(s)</small>
         </div>
 
-        <div className='flex flex-col gap-3'>
+        <div ref={list} className='flex flex-col gap-3'>
           {reservations.data?.map(item =>
           {
             return (

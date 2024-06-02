@@ -15,7 +15,7 @@ model Reservation {
     firstName       String
     lastName        String
     totalPrice      String
-    totalTravelTime String
+    totalTravelTime Int
     createdAt       DateTime            @default(now())
     tickets         ReservationTicket[]
     ticket          Ticket?             @relation(fields: [ticketId], references: [id], onDelete: Cascade)
@@ -24,6 +24,7 @@ model Reservation {
 
 model ReservationTicket {
     id            Int         @id @default(autoincrement())
+    amount        Int
     schedule      Schedule    @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
     reservation   Reservation? @relation(fields: [reservationId], references: [id], onDelete: Cascade)
     reservationId Int?

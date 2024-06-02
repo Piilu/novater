@@ -28,10 +28,19 @@ function now()
   return dayjs().toDate();
 }
 
+function formatTime(totalMinutes: number)
+{
+  const hours = totalMinutes / 60;
+  const minutes = totalMinutes % 60;
+
+  return `${hours.toFixed()}h ${minutes.toFixed()}m`
+}
+
 export const date = {
   getTime,
   getDate,
   convertToDate,
   now,
   getRawTimeBetween,
+  formatTime,
 }

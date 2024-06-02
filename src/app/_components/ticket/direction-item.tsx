@@ -11,6 +11,7 @@ type DirectionItemProps = {
     endDate: Date,
     distance: string,
     travelTime: number,
+    amount?: number,
   },
   compact?: boolean
 }
@@ -18,7 +19,6 @@ type DirectionItemProps = {
 export default function DirectionItem(props: DirectionItemProps)
 {
   const { details } = props;
-
   return (
     <div className='w-full'>
       <div className='flex items-center justify-between'>
@@ -26,6 +26,7 @@ export default function DirectionItem(props: DirectionItemProps)
           city={details.from}
           date={details.startDate} />
         <div className='flex flex-col items-center'>
+          <p className='font-semibold'>{details.amount}</p>
           <p className='font-semibold'>{details.company}</p>
           <DirectionArrow />
         </div>
