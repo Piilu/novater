@@ -9,4 +9,4 @@
 ## Mida teeksin juurde?
 - Võimaluse osta ümberistumisega piletit
 - Lazy loading
-- Parema filtreerimis loogika
+- Parema filtreerimise
