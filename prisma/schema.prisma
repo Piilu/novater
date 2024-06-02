@@ -18,24 +18,27 @@ model Reservation {
     totalTravelTime String
     createdAt       DateTime            @default(now())
     tickets         ReservationTicket[]
+    ticket          Ticket?             @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+    ticketId        String?
 }
 
 model ReservationTicket {
     id            Int         @id @default(autoincrement())
     schedule      Schedule    @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
-    reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
-    reservationId Int
+    reservation   Reservation? @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+    reservationId Int?
     scheduleId    String
 }
 
 model Ticket {
-    id        String      @id @default(uuid())
-    expires   DateTime
-    companies Company[]
-    schedules Schedule[]
-    routeData RouteData[]
-    routes    Route[]
-    createdAt DateTime    @default(now())
+    id           String        @id @default(uuid())
+    expires      DateTime
+    companies    Company[]
+    schedules    Schedule[]
+    routeData    RouteData[]
+    routes       Route[]
+    reservations Reservation[]
+    createdAt    DateTime      @default(now())
 }
 
 model Route {

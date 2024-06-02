@@ -2,6 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { getError } from "~/server/errorUtils";
 import { comapnyRepository } from "~/server/repository/company-repository";
+import { ticketRepository } from "~/server/repository/ticket-repository";
 import { ticketService } from "~/server/service/ticket-service";
 
 export const ticketRouter = createTRPCRouter({
@@ -63,6 +64,19 @@ export const ticketRouter = createTRPCRouter({
         const ticketId = !input.id ? (await ticketService.getValid()).id : input.id;
         const filters = input.filters;
         return await ticketService.getRoutes(input.form, input.to, filters, ticketId);
+      }
+      catch (error: unknown)
+      {
+        throw new Error(getError(error))
+      }
+    }),
+
+  history: publicProcedure
+    .query(async () =>
+    {
+      try
+      {
+        return await ticketService.getExpired()
       }
       catch (error: unknown)
       {

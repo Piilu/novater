@@ -1,7 +1,8 @@
-import type { RouteTicketRawData, TicketTravelData } from "~/lib/type";
+import type { RouteTicketRawData, TicketModelData, TicketTravelData } from "~/lib/type";
 import { routeRepository } from "../repository/route-repository";
 import { ticketRepository } from "../repository/ticket-repository";
 import { importService } from "./import-service";
+import { date } from "~/lib/date";
 
 async function getValid()
 {
@@ -44,22 +45,19 @@ async function getMultiRoutes(
 {
   const rawData = await routeRepository.searchRoutes(from, to, ticketId);
 
-  const data: RouteTicketRawData[][][] = [];
+  const data: RouteTicketRawData[][] = [];
   for (const trips of rawData)
   {
-    const tripRoutes: RouteTicketRawData[][] = [];
-
-    for (const trip of trips)
+    const routes: RouteTicketRawData[] = [];
+    for (const trip of trips.flatMap(item => item))
     {
       const tripRoute = await routeRepository.findRoutes(trip.from, trip.to, filters, ticketId);
-      tripRoutes.push(tripRoute);
+      const test = tripRoute[tripRoute.length - 1] ?? {} as RouteTicketRawData;
+      routes.push(test);
     }
-    data.push(tripRoutes)
+    data.push(routes);
   }
   return data;
-
-
-  return rawData;
 }
 
 function extractedData(data: RouteTicketRawData[])
@@ -82,10 +80,25 @@ function extractedData(data: RouteTicketRawData[])
   })
 }
 
+async function getExpired()
+{
+  const tickets = await ticketRepository.findAllExcept();
+
+  return tickets.map(item =>
+  {
+    return {
+      ...item,
+      isValid: item.expires >= date.now(),
+    } as TicketModelData
+
+  })
+}
+
 export const ticketService =
 {
   getValid,
   getPlaces,
   getRoutes,
+  getExpired,
   getMultiRoutes,
 }

@@ -58,6 +58,14 @@ export interface ApiCompany
 
 
 //#region TICKET DATA
+export interface TicketModelData
+{
+  isValid: boolean;
+  id: string;
+  expires: Date;
+  createdAt: Date;
+}
+
 export interface TicketData
 {
   id: string
@@ -122,4 +130,29 @@ export const reservationSchema = z.object({
 })
 
 export type ReservationSchema = z.infer<typeof reservationSchema>
+
+
+export interface ReservationModel
+{
+  id: number,
+  firstName: string,
+  lastName: string,
+  totalPrice: string,
+  totalTravelTime: string,
+  createdAt: Date,
+  tickets: {
+    id: number,
+    amount: number,
+    createdAt: Date,
+    schedule: Schedule & {
+      company: Company,
+      route: Route & {
+        from: RouteData,
+        to: RouteData,
+      },
+    }
+  }[]
+  ticket: Ticket,
+  ticketId: string,
+}
 //#endregion

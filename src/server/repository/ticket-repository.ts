@@ -74,11 +74,27 @@ async function removeByDate(date: Date)
   })
 }
 
+async function findAllExcept(id?: string)
+{
+  return await db.ticket.findMany(
+    {
+      orderBy:
+      {
+        expires: "desc"
+      },
+      where: {
+        id: { not: id }
+      }
+
+    });
+}
+
 export const ticketRepository = {
   create,
   count,
   findById,
   findOldest,
+  findAllExcept,
   removeByDate,
   remove,
 }
