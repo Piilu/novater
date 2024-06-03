@@ -126,8 +126,8 @@ export const reservationSchema = z.object({
   schedules: z.array(z.object({
     id: z.string(),
     amount: z.number()
-  })),
-  tickets: z.array(z.string()),
+  })).optional(),
+  tickets: z.array(z.string()).optional(),
 })
 
 export type ReservationSchema = z.infer<typeof reservationSchema>

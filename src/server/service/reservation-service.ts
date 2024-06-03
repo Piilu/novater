@@ -22,7 +22,9 @@ async function create(data: ReservationSchema)
 async function validate(data: ReservationSchema)
 {
   const validTicket = await ticketService.getValid();
-  return data.tickets.length === data.tickets.filter(id => id === validTicket.id).length;
+  console.log(validTicket.id)
+  console.log(data.tickets)
+  return data.tickets?.length === data.tickets?.filter(id => id === validTicket.id).length;
 }
 
 export const reservationService = {

@@ -62,14 +62,17 @@ export default function Checkout(props: CheckoutProps)
       lastName: "",
       totalPrice: totalPrice.toString(),
       totalTravelTime: totalTravelTime,
-      schedules: tickets.map(item => { return { id: item.ticket.schedule.id, amount: item.amount } }),
-      tickets: tickets.map(item => item.ticket.ticket.id),
     }
   })
 
   const onSubmit = () =>
   {
-    reservation.mutate(form.getValues(), {
+    const data: ReservationSchema = {
+      ...form.getValues(),
+      schedules: tickets.map(item => { return { id: item.ticket.schedule.id, amount: item.amount } }),
+      tickets: tickets.map(item => item.ticket.ticket.id),
+    };
+    reservation.mutate(data, {
       onSuccess: (data) =>
       {
         setTickets([]);
@@ -95,7 +98,6 @@ export default function Checkout(props: CheckoutProps)
   }
 
   useEffect(() => { setIsLoading(false) }, [])
-  if (tickets.length === 0 || !tickets) return null;
   if (isLoading) return null;
   return (
     <Dialog>

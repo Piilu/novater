@@ -8,7 +8,7 @@ import DirectionArrow from '../ui/direction-arrow';
 import SelectSearch from '../ui/select-search';
 import { FilterIcon, Search, SortAsc, SortDesc } from 'lucide-react';
 import type { Ticket } from '@prisma/client';
-import type { SortType, SortValue, TicketModelData } from '~/lib/type';
+import type { LocalTicket, SortType, SortValue, TicketModelData } from '~/lib/type';
 import { date } from '~/lib/date';
 import useQuery, { QueryNames } from '~/hooks/use-query';
 import { useDebounce } from 'use-debounce';
@@ -16,6 +16,7 @@ import { Button } from '../ui/button';
 import RecommendedRoutes from './recommended-routes';
 import Checkout from '../reservation/checkout';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
+import useLocalStorage from 'use-local-storage';
 
 const sortValues =
   [
@@ -35,6 +36,8 @@ export default function TicketList(props: TicketListProps)
   const [filters, setFilters] = useState<string[]>([]);
   const [sortValue, setSortValue] = useState<SortValue>("price");
   const [sortType, setSortType] = useState<SortType>("asc");
+  const [selectedTickets, setTickets] = useLocalStorage("tickets", [] as LocalTicket[])
+
   const [list] = useAutoAnimate();
 
   const { updateValue, from, to } = useQuery();
@@ -109,7 +112,7 @@ export default function TicketList(props: TicketListProps)
         {tickets.data?.map((item, index) =>
         {
           return (
-            <TicketItem item={item} key={index + "test"} />
+            <TicketItem disableCart={selectedId !== currentTicket.id}  item={item} key={index + "test"} />
           )
         })}
         {tickets.isLoading && <p className='text-center'>Loading ...</p>}
@@ -129,7 +132,7 @@ export default function TicketList(props: TicketListProps)
 
           : null}
       </div>
-      <Checkout ticket={currentTicket} className="fixed bottom-4 w-full inset-x-0 mx-auto" />
+      {selectedTickets.length === 0 || !tickets ? null : <Checkout ticket={currentTicket} className="fixed bottom-4 w-full inset-x-0 mx-auto" />}
     </div>
   )
 }
